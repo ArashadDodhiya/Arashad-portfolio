@@ -4,13 +4,43 @@ import { motion } from "framer-motion";
 import Button from "@/components/ui/Button";
 
 export default function Contact() {
-    return (
-        <section id="contact" className="relative min-h-[100svh] flex items-center justify-center overflow-hidden bg-[#08080A] py-20 md:py-0">
+    const contactLinks = [
+        {
+            label: "START MISSION (EMAIL)",
+            variant: "primary" as const,
+            link: "mailto:ahd613900@gmail.com?subject=MISSION_RECRUITMENT",
+            external: false,
+        },
+        {
+            label: "ALLIANCE (LINKEDIN)",
+            variant: "outline" as const,
+            link: "https://www.linkedin.com/in/arashad-dodhiya-9b3353241/",
+            external: true,
+        },
+        {
+            label: "CODEBASE (GITHUB)",
+            variant: "outline" as const,
+            link: "https://github.com/ArashadDodhiya",
+            external: true,
+        },
+    ];
 
+    const handleNavigation = (link: string, external: boolean) => {
+        if (external) {
+            window.open(link, "_blank", "noopener,noreferrer");
+        } else {
+            window.location.href = link;
+        }
+    };
+
+    return (
+        <section
+            id="contact"
+            className="relative min-h-[100svh] flex items-center justify-center overflow-hidden bg-[#08080A] py-20 md:py-0"
+        >
             {/* 1. CINEMATIC LETTERBOXING */}
             <div className="absolute top-0 left-0 w-full h-[5vh] md:h-[10vh] bg-black z-30 border-b border-white/5" />
             <div className="absolute bottom-0 left-0 w-full h-[5vh] md:h-[10vh] bg-black z-30 flex items-center justify-center border-t border-white/5">
-                {/* Animated "To Be Continued" arrow style */}
                 <motion.div
                     initial={{ x: -20, opacity: 0 }}
                     whileInView={{ x: 0, opacity: 1 }}
@@ -25,7 +55,6 @@ export default function Contact() {
             {/* 2. BACKGROUND VISUALS */}
             <div className="absolute inset-0 z-0">
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0F0F14]/80 to-black" />
-                {/* Scanning lines */}
                 <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
             </div>
 
@@ -68,11 +97,7 @@ export default function Contact() {
 
                 {/* 3. TACTICAL ACTION BUTTONS */}
                 <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 md:gap-4 max-w-sm sm:max-w-none mx-auto">
-                    {[
-                        { label: "START MISSION (EMAIL)", variant: "primary", link: "mailto:your@email.com" },
-                        { label: "ALLIANCE (LINKEDIN)", variant: "outline", link: "https://linkedin.com/in/..." },
-                        { label: "CODEBASE (GITHUB)", variant: "outline", link: "https://github.com/..." }
-                    ].map((btn, i) => (
+                    {contactLinks.map((btn, i) => (
                         <motion.div
                             key={i}
                             whileHover={{ scale: 1.05 }}
@@ -80,8 +105,9 @@ export default function Contact() {
                             className="w-full sm:w-auto"
                         >
                             <Button
-                                variant={btn.variant as any}
+                                variant={btn.variant}
                                 size="lg"
+                                onClick={() => handleNavigation(btn.link, btn.external)}
                                 className="group relative w-full overflow-hidden border-2 px-6 md:px-8 py-4 md:py-6"
                             >
                                 <span className="relative z-10 font-bebas text-xl md:text-2xl tracking-wide">
@@ -101,7 +127,7 @@ export default function Contact() {
                 </div>
             </motion.div>
 
-            {/* 5. DECORATIVE SIDEBARS (Hidden on mobile/tablet) */}
+            {/* 5. DECORATIVE SIDEBARS */}
             <div className="absolute left-6 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-4 opacity-10 text-[10px] font-mono text-white vertical-rl">
                 <span className="tracking-widest">STATUS: READY</span>
                 <div className="h-20 w-[1px] bg-white mx-auto" />
