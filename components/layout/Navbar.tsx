@@ -16,7 +16,11 @@ export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
-    // Handle scroll blur effect
+    // Your specific email logic
+    const handleHireMe = () => {
+        window.location.href = "mailto:ahd613900@gmail.com?subject=MISSION_RECRUITMENT";
+    };
+
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 50);
         window.addEventListener("scroll", handleScroll);
@@ -57,7 +61,13 @@ export default function Navbar() {
                             {link.name}
                         </a>
                     ))}
-                    <Button variant="primary" size="sm" className="ml-4">
+                    {/* Integrated Hire Me Button */}
+                    <Button
+                        variant="primary"
+                        size="sm"
+                        className="ml-4"
+                        onClick={handleHireMe}
+                    >
                         HIRE_ME
                     </Button>
                 </div>
@@ -65,7 +75,7 @@ export default function Navbar() {
                 {/* MOBILE MENU TRIGGER */}
                 <button
                     onClick={() => setIsOpen(!isOpen)}
-                    className="md:hidden flex flex-col gap-1.5 p-2 z-[110]"
+                    className="md:hidden flex flex-col gap-1.5 p-2 z-[110] outline-none"
                 >
                     <motion.div
                         animate={isOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
@@ -92,7 +102,6 @@ export default function Navbar() {
                         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                         className="fixed inset-0 bg-[#08080A] z-[105] flex flex-col items-center justify-center gap-8"
                     >
-                        {/* Manga Background Decor in Menu */}
                         <div className="absolute inset-0 opacity-5 pointer-events-none bg-[radial-gradient(white_1px,transparent_1px)] [background-size:20px_20px]" />
                         <div className="absolute right-0 bottom-0 text-[30vh] font-black text-white/5 pointer-events-none select-none">
                             忍
@@ -118,7 +127,15 @@ export default function Navbar() {
                             transition={{ delay: 0.4 }}
                             className="mt-8"
                         >
-                            <Button onClick={() => setIsOpen(false)} variant="primary" size="lg">
+                            {/* Integrated Hire Me Button for Mobile */}
+                            <Button
+                                onClick={() => {
+                                    setIsOpen(false);
+                                    handleHireMe();
+                                }}
+                                variant="primary"
+                                size="lg"
+                            >
                                 CONTACT_BASE
                             </Button>
                         </motion.div>
