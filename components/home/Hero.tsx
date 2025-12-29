@@ -2,21 +2,23 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import Image from "next/image"; // Import Next.js Image component
 import Button from "@/components/ui/Button";
 
 export default function Hero() {
     const containerRef = useRef(null);
     const { scrollY } = useScroll();
 
-    // Parallax values - subtle adjustments for better mobile performance
-    const y1 = useTransform(scrollY, [0, 500], [0, 150]);
-    const y2 = useTransform(scrollY, [0, 500], [0, -100]);
+    // Parallax values
+    const y1 = useTransform(scrollY, [0, 500], [0, 150]); // Slash background
+    const yImg = useTransform(scrollY, [0, 500], [0, 50]); // The Photo (slower)
+    const y2 = useTransform(scrollY, [0, 500], [0, -100]); // Text (faster, upward)
     const rotate = useTransform(scrollY, [0, 500], [-12, -18]);
 
     return (
         <section
             ref={containerRef}
-            className="relative min-h-[100svh] w-full bg-[#08080A] flex items-center justify-center overflow-hidden py-20"
+            className="relative min-h-[100svh] w-full bg-[#08080A] flex items-center justify-center overflow-hidden py-10 md:py-20"
         >
             {/* 1. THE IMPACT SLASH */}
             <motion.div
@@ -29,7 +31,7 @@ export default function Hero() {
                 <div className="absolute inset-0 bg-[radial-gradient(black_2px,transparent_2px)] [background-size:8px_8px] md:[background-size:10px_10px]" />
             </motion.div>
 
-            {/* 2. SPEED LINES */}
+            {/* 2. SPEED LINES (Background) */}
             <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
                 <svg width="100%" height="100%" preserveAspectRatio="none" className="absolute inset-0">
                     <pattern id="speed-lines" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
@@ -38,6 +40,27 @@ export default function Hero() {
                     <rect width="100%" height="100%" fill="url(#speed-lines)" />
                 </svg>
             </div>
+
+            {/* --- PHOTO INTEGRATION LAYER --- */}
+            <motion.div
+                style={{ y: yImg }}
+                initial={{ opacity: 0, scale: 1.1 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
+                className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none"
+            >
+                <div className="relative w-full h-full max-w-[800px] max-h-[800px] opacity-40 md:opacity-60 grayscale brightness-125">
+                    <Image
+                        src="/Arashad.png" // MAKE SURE FILENAME MATCHES
+                        alt="Arashad Manga Style"
+                        fill
+                        className="object-contain object-bottom md:object-center"
+                        priority
+                    />
+                    {/* Soft gradient to blend the bottom of the photo into the black background */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#08080A] via-transparent to-transparent" />
+                </div>
+            </motion.div>
 
             {/* 3. CENTER CONTENT */}
             <div className="relative z-20 container mx-auto px-4 sm:px-6 flex flex-col items-center justify-center">
@@ -64,7 +87,7 @@ export default function Hero() {
                                 initial={{ x: -50, opacity: 0 }}
                                 animate={{ x: 0, opacity: 1 }}
                                 transition={{ duration: 0.6, delay: 0.2 }}
-                                className="relative z-10"
+                                className="relative z-10 drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)]"
                             >
                                 ARASHAD
                             </motion.span>
@@ -74,10 +97,9 @@ export default function Hero() {
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.4 }}
                             >
-                                {/* Layered Text Shadows (Optimized for performance) */}
                                 <span className="absolute top-[1px] left-[1px] md:top-[2px] md:left-[2px] text-anime-red opacity-70 select-none">DODHIYA</span>
                                 <span className="absolute top-[-1px] left-[-1px] md:top-[-2px] md:left-[-2px] text-anime-purple opacity-70 select-none">DODHIYA</span>
-                                <span className="relative text-white border-b-2 md:border-b-4 border-anime-orange">DODHIYA</span>
+                                <span className="relative text-white border-b-2 md:border-b-4 border-anime-orange drop-shadow-[0_5px_5px_rgba(0,0,0,1)]">DODHIYA</span>
                             </motion.span>
                         </h1>
                     </motion.div>
@@ -138,7 +160,7 @@ export default function Hero() {
                 </motion.div>
             </div>
 
-            {/* 4. TACTICAL HUD ELEMENTS (Hidden on small mobile) */}
+            {/* 4. TACTICAL HUD ELEMENTS */}
             <div className="absolute top-6 left-6 md:top-10 md:left-10 opacity-30 md:opacity-20 hidden sm:block">
                 <div className="font-mono text-[8px] md:text-[10px] text-white space-y-1">
                     <p>LAT: 22.3039° N</p>
