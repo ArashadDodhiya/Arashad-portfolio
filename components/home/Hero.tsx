@@ -2,177 +2,180 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
-import Image from "next/image"; // Import Next.js Image component
+import Image from "next/image";
 import Button from "@/components/ui/Button";
 
 export default function Hero() {
     const containerRef = useRef(null);
     const { scrollY } = useScroll();
 
+    // Timing Constants
+    const imgDuration = 1.2;
+    const textStartDelay = 0.8; // Text starts appearing while image finishes
+
     // Parallax values
-    const y1 = useTransform(scrollY, [0, 500], [0, 150]); // Slash background
-    const yImg = useTransform(scrollY, [0, 500], [0, 50]); // The Photo (slower)
-    const y2 = useTransform(scrollY, [0, 500], [0, -100]); // Text (faster, upward)
+    const ySlash = useTransform(scrollY, [0, 500], [0, 150]);
+    const yImage = useTransform(scrollY, [0, 500], [0, 60]);
+    const yText = useTransform(scrollY, [0, 500], [0, -120]);
     const rotate = useTransform(scrollY, [0, 500], [-12, -18]);
 
     return (
         <section
             ref={containerRef}
-            className="relative min-h-[100svh] w-full bg-[#08080A] flex items-center justify-center overflow-hidden py-10 md:py-20"
+            className="relative min-h-[100svh] w-full bg-[#08080A] overflow-hidden flex items-center justify-center"
         >
-            {/* 1. THE IMPACT SLASH */}
+            {/* 1. DIAGONAL IMPACT SLASH */}
             <motion.div
-                style={{ rotate, y: y1 }}
+                style={{ rotate, y: ySlash }}
                 className="absolute top-[-10%] right-[-10%] w-[140%] h-[120%] bg-[#FF6B00] opacity-5 md:opacity-10 pointer-events-none"
                 initial={{ x: "100%" }}
                 animate={{ x: 0 }}
-                transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
+                transition={{ duration: 1, delay: 0.2, ease: [0.23, 1, 0.32, 1] }}
             >
-                <div className="absolute inset-0 bg-[radial-gradient(black_2px,transparent_2px)] [background-size:8px_8px] md:[background-size:10px_10px]" />
+                <div className="absolute inset-0 bg-[radial-gradient(black_2px,transparent_2px)] [background-size:10px_10px]" />
             </motion.div>
 
-            {/* 2. SPEED LINES (Background) */}
-            <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
-                <svg width="100%" height="100%" preserveAspectRatio="none" className="absolute inset-0">
-                    <pattern id="speed-lines" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+            {/* 2. SPEED LINE BACKGROUND */}
+            <div className="absolute inset-0 opacity-10 pointer-events-none">
+                <svg width="100%" height="100%" preserveAspectRatio="none">
+                    <pattern id="speed" width="80" height="80" patternUnits="userSpaceOnUse">
                         <line x1="0" y1="0" x2="80" y2="80" stroke="white" strokeWidth="0.5" />
                     </pattern>
-                    <rect width="100%" height="100%" fill="url(#speed-lines)" />
+                    <rect width="100%" height="100%" fill="url(#speed)" />
                 </svg>
             </div>
 
-            {/* --- PHOTO INTEGRATION LAYER --- */}
+            {/* 3. IMAGE — THE FIRST TO APPEAR */}
             <motion.div
-                style={{ y: yImg }}
-                initial={{ opacity: 0, scale: 1.1 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1.2, ease: "easeOut" }}
-                className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none"
+                style={{ y: yImage }}
+                initial={{ opacity: 0, scale: 1.2, filter: "blur(10px)" }}
+                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                transition={{ duration: imgDuration, ease: [0.16, 1, 0.3, 1] }}
+                className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[90vw] md:w-[45vw] lg:w-[40vw] h-[75vh] md:h-[85vh] z-10 pointer-events-none"
             >
-                <div className="relative w-full h-full max-w-[800px] max-h-[800px] opacity-40 md:opacity-60 grayscale brightness-125">
+                <div className="relative w-full h-full grayscale contrast-125 brightness-110 opacity-40 md:opacity-50">
                     <Image
-                        src="/Arashad.png" // MAKE SURE FILENAME MATCHES
-                        alt="Arashad Manga Style"
+                        src="/Arashad.png"
+                        alt="Arashad Manga Presence"
                         fill
-                        className="object-contain object-bottom md:object-center"
                         priority
+                        className="object-contain object-bottom md:object-cover md:object-top"
                     />
-                    {/* Soft gradient to blend the bottom of the photo into the black background */}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#08080A] via-transparent to-transparent" />
                 </div>
             </motion.div>
 
-            {/* 3. CENTER CONTENT */}
-            <div className="relative z-20 container mx-auto px-4 sm:px-6 flex flex-col items-center justify-center">
+            {/* 4. MAIN CONTENT — SEQUENTIAL REVEAL */}
+            <div className="relative z-20 container mx-auto px-4 flex flex-col items-center text-center">
 
                 {/* Episode Tag */}
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                    className="flex items-center gap-2 md:gap-4 mb-8 md:mb-12"
+                    transition={{ delay: textStartDelay, duration: 0.5 }}
+                    className="flex items-center gap-4 mb-6 md:mb-10"
                 >
-                    <div className="h-[1px] w-8 md:w-12 bg-anime-orange" />
-                    <span className="text-anime-orange font-mono text-[10px] md:text-xs tracking-[0.3em] md:tracking-[0.5em] uppercase text-center">
+                    <div className="h-[1px] w-6 md:w-10 bg-anime-orange" />
+                    <span className="text-anime-orange font-mono text-[10px] md:text-xs tracking-[0.4em] uppercase">
                         EPISODE_01 // THE_AWAKENING
                     </span>
-                    <div className="h-[1px] w-8 md:w-12 bg-anime-orange" />
+                    <div className="h-[1px] w-6 md:w-10 bg-anime-orange" />
                 </motion.div>
 
-                {/* MASSIVE IMPACT TYPOGRAPHY */}
-                <div className="relative w-full flex justify-center">
-                    <motion.div style={{ y: y2 }} className="flex flex-col items-center w-full">
-                        <h1 className="text-[18vw] sm:text-[15vw] md:text-[13vw] lg:text-[14vw] font-bebas leading-[0.8] text-white italic tracking-tighter flex flex-col items-center">
-                            <motion.span
-                                initial={{ x: -50, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                transition={{ duration: 0.6, delay: 0.2 }}
-                                className="relative z-10 drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)]"
-                            >
-                                ARASHAD
-                            </motion.span>
-                            <motion.span
-                                className="relative inline-block font-bebas text-white"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.4 }}
-                            >
-                                <span className="absolute top-[1px] left-[1px] md:top-[2px] md:left-[2px] text-anime-red opacity-70 select-none">DODHIYA</span>
-                                <span className="absolute top-[-1px] left-[-1px] md:top-[-2px] md:left-[-2px] text-anime-purple opacity-70 select-none">DODHIYA</span>
-                                <span className="relative text-white border-b-2 md:border-b-4 border-anime-orange drop-shadow-[0_5px_5px_rgba(0,0,0,1)]">DODHIYA</span>
-                            </motion.span>
-                        </h1>
-                    </motion.div>
+                {/* NAME — MASSIVE TYPOGRAPHY */}
+                <motion.div style={{ y: yText }} className="relative">
+                    <h1 className="text-[16vw] md:text-[14vw] font-bebas italic leading-[0.85] tracking-tighter text-white">
+                        <motion.span
+                            initial={{ x: -30, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            transition={{ delay: textStartDelay + 0.2, duration: 0.8 }}
+                            className="block drop-shadow-[0_12px_12px_rgba(0,0,0,0.9)]"
+                        >
+                            ARASHAD
+                        </motion.span>
 
-                    {/* Decorative Kanji */}
+                        <motion.span
+                            initial={{ x: 30, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            transition={{ delay: textStartDelay + 0.4, duration: 0.8 }}
+                            className="relative inline-block"
+                        >
+                            <span className="absolute top-[2px] left-[2px] text-anime-red opacity-70">DODHIYA</span>
+                            <span className="absolute top-[-2px] left-[-2px] text-anime-purple opacity-70">DODHIYA</span>
+                            <span className="relative border-b-2 md:border-b-4 border-anime-orange">DODHIYA</span>
+                        </motion.span>
+                    </h1>
+
+                    {/* Kanji Background */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 1.5 }}
-                        animate={{ opacity: 0.05, scale: 1 }}
-                        transition={{ duration: 1.5 }}
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[40vw] md:text-[30vw] font-black text-white pointer-events-none -z-10 select-none"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 0.04 }}
+                        transition={{ delay: textStartDelay + 0.8, duration: 2 }}
+                        className="absolute inset-0 flex items-center justify-center text-[30vw] font-black text-white select-none pointer-events-none"
                     >
                         最強
                     </motion.div>
-                </div>
+                </motion.div>
 
-                {/* SUBTITLE & MISSION */}
+                {/* ROLES + QUOTE */}
                 <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1, duration: 1 }}
-                    className="mt-8 md:mt-12 text-center px-4"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: textStartDelay + 0.6 }}
+                    className="mt-8 md:mt-10"
                 >
-                    <div className="text-zinc-500 font-mono text-[10px] md:text-sm lg:text-lg tracking-widest uppercase mb-4 flex flex-wrap items-center justify-center gap-2 md:gap-4">
+                    <div className="text-zinc-500 font-mono text-[10px] md:text-sm tracking-widest uppercase mb-4 flex flex-wrap justify-center gap-3 md:gap-4">
                         <span>Web Architect</span>
-                        <span className="hidden sm:block w-1.5 h-1.5 bg-anime-red rotate-45" />
+                        <span className="w-1 h-1 bg-anime-red rotate-45 self-center" />
                         <span>AI Pioneer</span>
-                        <span className="hidden sm:block w-1.5 h-1.5 bg-anime-purple rotate-45" />
+                        <span className="w-1 h-1 bg-anime-purple rotate-45 self-center" />
                         <span>Cybersecurity</span>
                     </div>
-                    <h3 className="text-white text-xl sm:text-2xl md:text-4xl font-bebas italic tracking-wide">
-                        &quot;NOT THE STRONGEST. <span className="text-anime-orange underline decoration-2 underline-offset-4 md:underline-offset-8">NOT YET.</span>&quot;
+
+                    <h3 className="text-white text-lg md:text-4xl font-bebas italic">
+                        “NOT THE STRONGEST.
+                        <span className="text-anime-orange underline underline-offset-8 ml-2">
+                            NOT YET.
+                        </span>”
                     </h3>
                 </motion.div>
 
-                {/* CALL TO ACTION */}
+                {/* CTA BUTTONS */}
                 <motion.div
                     initial={{ y: 30, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 1.2 }}
-                    className="mt-10 md:mt-16 flex flex-col sm:flex-row gap-4 md:gap-8 w-full max-w-md sm:max-w-none justify-center items-center"
+                    transition={{ delay: textStartDelay + 0.9 }}
+                    className="mt-10 md:mt-14 flex flex-col sm:flex-row gap-4 md:gap-6"
                 >
-                    <div className="relative group w-full sm:w-auto">
-                        <div className="absolute -inset-1 bg-anime-orange blur opacity-20 group-hover:opacity-70 transition duration-500 rounded" />
-                        <Button
-                            variant="primary"
-                            className="relative w-full sm:w-auto bg-black border-2 border-anime-orange text-anime-orange hover:bg-anime-orange hover:text-black px-8 md:px-12 py-4 md:py-8 text-xl md:text-2xl font-bebas sm:skew-x-[-10deg] transition-all"
-                        >
-                            START MISSION
-                        </Button>
-                    </div>
+                    <Button
+                        variant="primary"
+                        className="bg-black border-2 border-anime-orange text-anime-orange hover:bg-anime-orange hover:text-black px-8 md:px-10 py-4 md:py-6 text-xl md:text-2xl font-bebas skew-x-[-10deg] transition-all"
+                    >
+                        START MISSION
+                    </Button>
 
                     <Button
                         variant="outline"
-                        className="w-full sm:w-auto px-8 md:px-12 py-4 md:py-8 text-xl md:text-2xl font-bebas sm:skew-x-[-10deg] border-2 border-zinc-700 hover:border-white text-white transition-all"
+                        className="border-2 border-zinc-700 text-white hover:border-white px-8 md:px-10 py-4 md:py-6 text-xl md:text-2xl font-bebas skew-x-[-10deg] transition-all"
                     >
                         COLLECT INTEL (CV)
                     </Button>
                 </motion.div>
             </div>
 
-            {/* 4. TACTICAL HUD ELEMENTS */}
-            <div className="absolute top-6 left-6 md:top-10 md:left-10 opacity-30 md:opacity-20 hidden sm:block">
-                <div className="font-mono text-[8px] md:text-[10px] text-white space-y-1">
+            {/* HUD Elements (Late Reveal) */}
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.2 }}
+                transition={{ delay: textStartDelay + 1.2 }}
+                className="absolute top-8 left-8 hidden sm:block"
+            >
+                <div className="font-mono text-[10px] text-white">
                     <p>LAT: 22.3039° N</p>
                     <p>LONG: 70.8022° E</p>
                     <p className="text-anime-orange">STATUS: SYSTEM_READY</p>
                 </div>
-            </div>
-
-            <div className="absolute bottom-6 right-6 md:bottom-10 md:right-10 flex flex-col items-end opacity-30 md:opacity-20 hidden sm:block">
-                <div className="w-16 md:w-32 h-[1px] md:h-[2px] bg-white mb-2" />
-                <p className="font-mono text-[8px] md:text-[10px] text-white tracking-[0.3em] md:tracking-[0.5em]">VERSION_2.0.25</p>
-            </div>
+            </motion.div>
         </section>
     );
 }
