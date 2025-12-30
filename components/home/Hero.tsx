@@ -124,7 +124,7 @@ export default function Hero() {
                     transition={{ delay: textStartDelay + 0.6 }}
                     className="mt-8 md:mt-10"
                 >
-                    <div className="text-zinc-500 font-mono text-[10px] md:text-sm tracking-widest uppercase mb-4 flex flex-wrap justify-center gap-3 md:gap-4">
+                    <div className="text-black font-mono text-[10px] md:text-sm tracking-widest uppercase mb-4 flex flex-wrap justify-center gap-3 md:gap-4">
                         <span>Web Architect</span>
                         <span className="w-1 h-1 bg-anime-red rotate-45 self-center" />
                         <span>AI Pioneer</span>
